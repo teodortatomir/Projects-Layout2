@@ -22,7 +22,6 @@ const projectsData = [
     { id: 18, title: "UiPath", cat: "Global Headquarters", type: "Tech", img: "../projects-pictures/uipath.jpg", link: "#" },
     { id: 19, title: "Adobe", cat: "Romania Hub", type: "Tech", img: "../projects-pictures/adobe.jpg", link: "#" },
     { id: 20, title: "Unilever", cat: "Sustainability Office", type: "Corporate", img: "../projects-pictures/unilever.jpg", link: "#" },
-    // NOILE PROIECTE ADAUGATE:
     { id: 21, title: "Alfasigma Romania", cat: "Pharmaceutical HQ", type: "Corporate", img: "../projects-pictures/alfasigma.jpg", link: "#" },
     { id: 22, title: "Swixx BioPharma", cat: "Healthcare Solutions", type: "Corporate", img: "../projects-pictures/swixx.jpg", link: "#" },
     { id: 23, title: "AMS Accelerate IT", cat: "IT Performance Center", type: "Tech", img: "../projects-pictures/ams.jpg", link: "#" },
@@ -101,6 +100,9 @@ const categories = ["All", "Corporate", "Tech", "Exclusive", "Beauty"];
 function ProjectsScene() {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
+    
+    // Detectăm dacă este mobil pentru a opri animațiile grele
+    const isMobile = window.innerWidth < 768;
 
     const filteredProjects = useMemo(() => {
         return projectsData.filter(p => {
@@ -111,107 +113,87 @@ function ProjectsScene() {
         });
     }, [filter, searchQuery]);
 
-    const getCount = (cat) => {
-        if (cat === "All") return projectsData.length;
-        return projectsData.filter(p => p.type === cat).length;
-    };
+    const getCount = (cat) => cat === "All" ? projectsData.length : projectsData.filter(p => p.type === cat).length;
+    const categories = ["All", "Corporate", "Tech", "Exclusive", "Beauty"];
 
     return (
-        <main className="pt-48 pb-40 min-h-screen">
+        <main className="pt-32 md:pt-48 pb-40 min-h-screen">
             <div className="projects-container">
-                <header className="mb-24 text-center">
+                <header className="mb-16 md:mb-24 text-center">
                     <motion.div 
-                        initial={{ opacity: 0, y: 30 }} 
+                        initial={{ opacity: 0, y: 20 }} 
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.8 }}
                     >
-                        <h1 className="text-6xl md:text-8xl font-light mb-12 tracking-tight text-[#2d2a26] leading-none">
+                        <h1 className="text-4xl md:text-8xl font-light mb-8 tracking-tight text-[#2d2a26] leading-tight">
                             Archive of <span className="font-serif italic text-[#c5a37d]">Excellence</span>
                         </h1>
                     </motion.div>
 
-                    <div className="w-full flex justify-center mb-12">
-                        <div className="max-w-md w-full relative group">
+                    <div className="w-full flex justify-center mb-8 md:mb-12">
+                        <div className="max-w-md w-full relative group px-4">
                             <input 
                                 type="text" 
                                 placeholder="Search for a project..." 
-                                className="w-full bg-transparent border-b border-[#c5a37d]/30 py-4 px-2 text-center focus:outline-none focus:border-[#c5a37d] transition-all font-light tracking-[0.3em] text-xs uppercase"
+                                className="w-full bg-transparent border-b border-[#c5a37d]/30 py-3 text-center focus:outline-none focus:border-[#c5a37d] transition-all font-light tracking-[0.2em] text-[10px] uppercase"
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                // Logica de dispariție a textului
                                 onFocus={(e) => e.target.placeholder = ""} 
                                 onBlur={(e) => e.target.placeholder = "Search for a project..."}
                             />
-                            <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#c5a37d] transition-all duration-700 group-focus-within:w-full"></div>
                         </div>
                     </div>
                     
-                    <div className="filter-bar inline-flex flex-wrap justify-center bg-white/40 p-2 rounded-full backdrop-blur-md border border-white/50 shadow-sm">
+                    <div className="filter-bar inline-flex flex-wrap justify-center bg-white/40 p-1.5 rounded-3xl md:rounded-full backdrop-blur-md border border-white/50 shadow-sm mx-4">
                         {categories.map(cat => (
                             <button 
                                 key={cat}
                                 onClick={() => setFilter(cat)}
-                                className={`filter-btn px-6 py-2 text-[10px] uppercase tracking-[0.2em] transition-all duration-500 rounded-full m-1 ${
-                                    filter === cat 
-                                    ? 'bg-[#2d2a26] text-white shadow-lg scale-105' 
-                                    : 'text-[#8d857d] hover:text-[#2d2a26] hover:bg-white/50'
+                                className={`filter-btn px-4 md:px-6 py-2 text-[9px] md:text-[10px] uppercase tracking-[0.1em] transition-all rounded-full ${
+                                    filter === cat ? 'bg-[#2d2a26] text-white' : 'text-[#8d857d]'
                                 }`}
                             >
-                                {cat} <span className="ml-1 opacity-40">[{getCount(cat)}]</span>
+                                {cat} <span className="opacity-40">({getCount(cat)})</span>
                             </button>
                         ))}
                     </div>
                 </header>
 
-                <motion.div layout className="dynamic-grid">
+                {/* OPTIMIZARE: Dezactivăm layout morphing pe mobil */}
+                <motion.div layout={!isMobile} className="dynamic-grid">
                     <AnimatePresence mode='popLayout'>
                         {filteredProjects.map((p, index) => (
                             <motion.div
                                 key={p.id}
-                                layout
-                                initial={{ opacity: 0, y: 40 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
+                                layout={!isMobile}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: isMobile ? "-20px" : "-100px" }}
                                 transition={{ 
-                                    duration: 0.8, 
-                                    delay: (index % 3) * 0.05,
-                                    ease: [0.16, 1, 0.3, 1] 
+                                    duration: 0.5, 
+                                    delay: isMobile ? 0 : (index % 3) * 0.05 
                                 }}
                                 className="project-card group"
                             >
                                 <a href={p.link} className="block no-underline">
-                                    <div className="img-wrapper relative aspect-[4/5] overflow-hidden bg-[#e9e5e0]">
-                                        <div className="absolute inset-0 bg-[#2d2a26]/40 opacity-0 group-hover:opacity-100 transition-all duration-700 z-10 flex items-center justify-center backdrop-blur-[2px]">
-                                            <span className="text-white text-[9px] tracking-[0.5em] uppercase border border-white/30 px-8 py-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                                                Discover Space
-                                            </span>
-                                        </div>
+                                    <div className="img-wrapper relative aspect-[4/5] overflow-hidden bg-[#e9e5e0] rounded-sm">
                                         <img 
                                             src={p.img} 
                                             alt={p.title} 
-                                            className="w-full h-full object-cover transition-transform duration-[2s] cubic-bezier(0.16, 1, 0.3, 1) group-hover:scale-110"
+                                            // Reducem calitatea renderizării pe mobil pentru viteză
+                                            className="w-full h-full object-cover transition-transform duration-700 md:duration-[2s] group-hover:scale-105"
                                             loading="lazy"
                                         />
                                     </div>
-                                    <div className="pt-8 pb-4 text-left">
-                                        <span className="text-[9px] uppercase tracking-[0.4em] text-[#c5a37d] font-bold block mb-3">
-                                            {p.cat}
-                                        </span>
-                                        <h3 className="text-2xl font-light text-[#2d2a26] group-hover:text-[#c5a37d] transition-colors duration-500">
-                                            {p.title}
-                                        </h3>
-                                        <div className="w-12 h-[1px] bg-[#c5a37d]/40 mt-6 group-hover:w-full transition-all duration-1000"></div>
+                                    <div className="pt-6 pb-4 text-center px-2">
+                                        <span className="text-[8px] uppercase tracking-[0.3em] text-[#c5a37d] font-bold block mb-2">{p.cat}</span>
+                                        <h3 className="text-lg md:text-2xl font-light text-[#2d2a26]">{p.title}</h3>
+                                        <div className="w-8 h-[1px] bg-[#c5a37d]/30 mt-4 mx-auto group-hover:w-16 transition-all"></div>
                                     </div>
                                 </a>
                             </motion.div>
                         ))}
                     </AnimatePresence>
                 </motion.div>
-                
-                {filteredProjects.length === 0 && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-40 text-center">
-                        <p className="text-[#8d857d] tracking-[0.5em] uppercase text-[10px]">Nu am găsit proiecte.</p>
-                    </motion.div>
-                )}
             </div>
         </main>
     );
