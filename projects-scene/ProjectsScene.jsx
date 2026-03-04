@@ -44,7 +44,6 @@ const projectsData = [
     { id: 40, title: "HBO Romania", cat: "Media & Entertainment", type: "Exclusive", img: "projects-pictures/hbo.jpg", link: "#" },
     { id: 41, title: "Novo Nordisk Farma", cat: "Healthcare Excellence", type: "Corporate", img: "projects-pictures/novonordisk.jpg", link: "#" },
     { id: 42, title: "ThoughtWorks Romania", cat: "Software Excellence", type: "Tech", img: "projects-pictures/thoughtworks.jpg", link: "#" },
-    { id: 43, title: "Euroins Romania", cat: "Insurance Services", type: "Corporate", img: "projects-pictures/euroins.jpg", link: "#" },
     { id: 44, title: "Skytower Block", cat: "Vertical Campus", type: "Exclusive", img: "projects-pictures/skytower-block.jpg", link: "#" },
     { id: 45, title: "Nestle Romania", cat: "FMCG Leader HQ", type: "Corporate", img: "projects-pictures/nestle.jpg", link: "#" },
     { id: 46, title: "Leading Pharma Company", cat: "Biotech Innovation", type: "Corporate", img: "projects-pictures/pharma-company.jpg", link: "#" },
@@ -100,8 +99,6 @@ const categories = ["All", "Corporate", "Tech", "Exclusive", "Beauty"];
 function ProjectsScene() {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
-    
-    // Detectăm dacă este mobil pentru a opri animațiile grele
     const isMobile = window.innerWidth < 768;
 
     const filteredProjects = useMemo(() => {
@@ -114,52 +111,51 @@ function ProjectsScene() {
     }, [filter, searchQuery]);
 
     const getCount = (cat) => cat === "All" ? projectsData.length : projectsData.filter(p => p.type === cat).length;
-    const categories = ["All", "Corporate", "Tech", "Exclusive", "Beauty"];
 
     return (
-        <main className="pt-32 md:pt-48 pb-40 min-h-screen">
+        <main className="pt-24 pb-40 min-h-screen">
             <div className="projects-container">
-                <header className="mb-16 md:mb-24 text-center">
+                <header className="mb-24 mt-20 text-center md:text-left">
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }} 
-                        animate={{ opacity: 1, y: 0 }}
+                        animate={{ opacity: 1, y: 0 }} 
                         transition={{ duration: 0.8 }}
+                        className="max-w-4xl"
                     >
-                        <h1 className="text-4xl md:text-8xl font-light mb-8 tracking-tight text-[#2d2a26] leading-tight">
-                            Archive of <span className="font-serif italic text-[#c5a37d]">Excellence</span>
+                        <h1 className="text-5xl md:text-7xl font-light tracking-tighter text-[#2d2a26] leading-[1.1] mb-6">
+                            Redefining Workspace <br />
+                            <span className="font-serif italic text-[#c5a37d]">through excellence.</span>
                         </h1>
+                        <div className="h-[1.5px] w-20 bg-[#c5a37d] mb-16 mx-auto md:mx-0"></div>
                     </motion.div>
 
-                    <div className="w-full flex justify-center mb-8 md:mb-12">
-                        <div className="max-w-md w-full relative group px-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 border-b border-[#2d2a26]/10 pb-8">
+                        <div className="filter-bar-editorial">
+                            {categories.map(cat => (
+                                <button 
+                                    key={cat} 
+                                    onClick={() => setFilter(cat)} 
+                                    className={`filter-link ${filter === cat ? 'active' : ''}`}
+                                >
+                                    {cat} <span className="count-sup">{getCount(cat)}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="search-wrapper-minimal">
                             <input 
                                 type="text" 
-                                placeholder="Search for a project..." 
-                                className="w-full bg-transparent border-b border-[#c5a37d]/30 py-3 text-center focus:outline-none focus:border-[#c5a37d] transition-all font-light tracking-[0.2em] text-[10px] uppercase"
+                                placeholder="Search project..." 
+                                className="search-input-editorial"
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onFocus={(e) => e.target.placeholder = ""} 
-                                onBlur={(e) => e.target.placeholder = "Search for a project..."}
+                                onBlur={(e) => e.target.placeholder = "Search project"}
                             />
                         </div>
                     </div>
-                    
-                    <div className="filter-bar inline-flex flex-wrap justify-center bg-white/40 p-1.5 rounded-3xl md:rounded-full backdrop-blur-md border border-white/50 shadow-sm mx-4">
-                        {categories.map(cat => (
-                            <button 
-                                key={cat}
-                                onClick={() => setFilter(cat)}
-                                className={`filter-btn px-4 md:px-6 py-2 text-[9px] md:text-[10px] uppercase tracking-[0.1em] transition-all rounded-full ${
-                                    filter === cat ? 'bg-[#2d2a26] text-white' : 'text-[#8d857d]'
-                                }`}
-                            >
-                                {cat} <span className="opacity-40">({getCount(cat)})</span>
-                            </button>
-                        ))}
-                    </div>
                 </header>
 
-                {/* OPTIMIZARE: Dezactivăm layout morphing pe mobil */}
-                <motion.div layout={!isMobile} className="dynamic-grid">
+                <motion.div layout={!isMobile} className="dynamic-grid-editorial">
                     <AnimatePresence mode='popLayout'>
                         {filteredProjects.map((p, index) => (
                             <motion.div
@@ -167,27 +163,30 @@ function ProjectsScene() {
                                 layout={!isMobile}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: isMobile ? "-20px" : "-100px" }}
-                                transition={{ 
-                                    duration: 0.5, 
-                                    delay: isMobile ? 0 : (index % 3) * 0.05 
-                                }}
-                                className="project-card group"
+                                viewport={{ once: true, margin: "-50px" }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.5, delay: isMobile ? 0 : (index % 3) * 0.05 }}
+                                className="project-card-editorial group"
                             >
                                 <a href={p.link} className="block no-underline">
-                                    <div className="img-wrapper relative aspect-[4/5] overflow-hidden bg-[#e9e5e0] rounded-sm">
+                                    <div className="img-container-editorial">
+                                        <div className="discover-badge-editorial">
+                                            <span>View Project</span>
+                                        </div>
                                         <img 
                                             src={p.img} 
                                             alt={p.title} 
-                                            // Reducem calitatea renderizării pe mobil pentru viteză
-                                            className="w-full h-full object-cover transition-transform duration-700 md:duration-[2s] group-hover:scale-105"
+                                            className="img-editorial"
                                             loading="lazy"
                                         />
                                     </div>
-                                    <div className="pt-6 pb-4 text-center px-2">
-                                        <span className="text-[8px] uppercase tracking-[0.3em] text-[#c5a37d] font-bold block mb-2">{p.cat}</span>
-                                        <h3 className="text-lg md:text-2xl font-light text-[#2d2a26]">{p.title}</h3>
-                                        <div className="w-8 h-[1px] bg-[#c5a37d]/30 mt-4 mx-auto group-hover:w-16 transition-all"></div>
+                                    <div className="content-editorial">
+                                        <div className="label-row">
+                                            <span className="cat-tag-editorial">{p.cat}</span>
+                                            <span className="separator">•</span>
+                                            <span className="type-tag-editorial">{p.type}</span>
+                                        </div>
+                                        <h3 className="title-editorial">{p.title}</h3>
                                     </div>
                                 </a>
                             </motion.div>

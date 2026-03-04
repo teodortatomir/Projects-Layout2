@@ -1,6 +1,13 @@
 :root {
     --accent: #c5a37d;
     --text-dark: #2d2a26;
+    --text-light: #8d857d;
+    --bg: #fcfaf7;
+}
+
+body {
+    background-color: var(--bg);
+    overflow-x: hidden;
 }
 
 .projects-container {
@@ -9,143 +16,204 @@
     padding: 0 5%;
 }
 
-/* Filter Navigation */
-.filter-bar {
+/* --- FILTRE & SEARCH --- */
+.filter-bar-editorial {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 60px;
+    gap: 40px;
     flex-wrap: wrap;
-    position: sticky;
-    top: 100px;
-    z-index: 50;
-    padding: 15px;
-    background: rgba(252, 250, 247, 0.8);
-    backdrop-filter: blur(10px);
-    border-radius: 50px;
 }
 
-.filter-btn {
-    font-size: 11px;
+.filter-link {
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    padding: 8px 20px;
-    border: 1px solid transparent;
-    border-radius: 20px;
-    transition: all 0.4s ease;
-    color: #8d857d;
-}
-
-.filter-btn.active {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: white;
-}
-
-/* Grid Layout */
-.dynamic-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 40px;
-}
-
-.project-card {
+    color: var(--text-light);
+    background: none;
+    border: none;
+    padding: 0 0 12px 0;
     position: relative;
-    overflow: hidden;
-    background: white;
-    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    font-weight: 400;
 }
 
-.img-wrapper {
+.count-sup {
+    font-size: 9px;
+    opacity: 0.5;
+    margin-left: 4px;
+    vertical-align: super;
+}
+
+.filter-link.active {
+    color: var(--text-dark);
+    font-weight: 700;
+    letter-spacing: 2.5px;
+}
+
+.filter-link::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--text-dark);
+    transition: width 0.4s ease;
+}
+
+.filter-link.active::after {
     width: 100%;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    position: relative;
 }
 
-.img-wrapper img {
+.search-input-editorial {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(45, 42, 38, 0.2);
+    padding: 10px 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    width: 180px;
+    outline: none;
+    transition: width 0.5s ease, border-color 0.4s ease;
+}
+
+.search-input-editorial:focus {
+    width: 280px;
+    border-color: var(--accent);
+}
+
+/* --- GRID SYSTEM (3 Coloane) --- */
+.dynamic-grid-editorial {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 imagini pe rand */
+    gap: 60px 40px;
+}
+
+/* --- CARD DESIGN --- */
+.project-card-editorial {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.img-container-editorial {
+    position: relative;
+    aspect-ratio: 4 / 3; /* Format mai compact pentru 3 pe rand */
+    overflow: hidden;
+    background: #e5e1dc;
+    border-radius: 2px;
+}
+
+.img-editorial {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 1.2s ease;
+    transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), filter 0.8s ease;
 }
 
-.project-card:hover img {
-    transform: scale(1.1);
+.project-card-editorial:hover .img-editorial {
+    transform: scale(1.08);
 }
 
-.card-content {
-    padding: 25px 0;
+/* DISCOVER BADGE */
+.discover-badge-editorial {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    width: 110px;
+    height: 110px;
+    background: rgba(45, 42, 38, 0.85); /* Fundal inchis pentru contrast */
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    pointer-events: none;
 }
 
-.project-category {
+.discover-badge-editorial span {
+    color: white;
     font-size: 10px;
-    color: var(--accent);
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+.project-card-editorial:hover .discover-badge-editorial {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* CONTENT --- */
+.content-editorial {
+    padding-top: 20px;
+}
+
+.label-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.cat-tag-editorial {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
     font-weight: 700;
 }
 
-.project-title {
-    font-size: 1.5rem;
-    font-weight: 300;
-    margin-top: 5px;
+.separator {
+    font-size: 10px;
+    color: var(--text-light);
+    opacity: 0.4;
+}
+
+.type-tag-editorial {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    letter-spacing: 1px;
+}
+
+.title-editorial {
+    font-size: 19px;
+    font-weight: 400;
     color: var(--text-dark);
+    line-height: 1.3;
+    transition: color 0.3s ease;
 }
 
-.projects-container {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 0 5%;
+.project-card-editorial:hover .title-editorial {
+    color: var(--accent);
 }
 
-.dynamic-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 80px 40px;
-}
-
-/* Efectul Staggered pentru Desktop */
-@media (min-width: 1024px) {
-    .project-card:nth-child(3n-1) {
-        transform: translateY(60px);
-    }
-}
-
-.img-wrapper {
-    box-shadow: 0 20px 40px rgba(0,0,0,0.03);
-}
-
-.filter-btn {
-    white-space: nowrap;
-}
-
-/* Placeholder-ul se estompează fin la focus */
-input::placeholder {
-    transition: opacity 0.4s ease;
-}
-
-input:focus::placeholder {
-    opacity: 0;
-}
-
-/* Efectul de subliniere (underline) pentru input devine mai intens la focus */
-input:focus {
-    border-color: var(--accent);
-}
-
-@media (max-width: 1100px) {
-    .dynamic-grid {
+/* --- RESPONSIVE --- */
+@media (max-width: 1200px) {
+    .dynamic-grid-editorial {
         grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
     }
-    .project-card:nth-child(3n-1) { transform: none; }
-    .project-card:nth-child(even) { transform: translateY(40px); }
 }
 
 @media (max-width: 768px) {
-    .dynamic-grid {
+    .dynamic-grid-editorial {
         grid-template-columns: 1fr;
+        gap: 40px;
     }
-    .project-card:nth-child(even) { transform: none; }
+    .filter-bar-editorial {
+        gap: 20px;
+        justify-content: center;
+    }
+    .search-input-editorial {
+        width: 100%;
+        text-align: center;
+    }
+    .discover-badge-editorial {
+        display: none;
+    }
 }
