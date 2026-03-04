@@ -1,5 +1,5 @@
 const { motion, AnimatePresence } = window.Motion;
-const { useState, useEffect, useMemo } = React;
+const { useState, useEffect, useMemo, useRef } = React;
 
 const projectsData = [
     { id: 1, title: "OMV Petrom", cat: "Corporate Campus", type: "Corporate", img: "projects-pictures/omvpetrom.jpg", link: "#" },
@@ -94,12 +94,16 @@ const projectsData = [
     { id: 91, title: "Impact Hub Cluj", cat: "Tech Community Center", type: "Exclusive", img: "projects-pictures/impact_hub_cluj-napoca.jpg", link: "#" }
 ];
 
-const categories = ["All", "Corporate", "Tech", "Exclusive", "Beauty"];
-
 function ProjectsScene() {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
+    const projectsRef = useRef(null); // Ref for scrolling
     const isMobile = window.innerWidth < 768;
+
+    // Scroll function
+    const scrollToProjects = () => {
+        projectsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 
     const filteredProjects = useMemo(() => {
         return projectsData.filter(p => {
@@ -111,56 +115,88 @@ function ProjectsScene() {
     }, [filter, searchQuery]);
 
     const getCount = (cat) => cat === "All" ? projectsData.length : projectsData.filter(p => p.type === cat).length;
+    const categories = ["All", "Corporate", "Tech", "Exclusive", "Beauty"];
 
     return (
-        <main className="pt-24 pb-40 min-h-screen">
-            <div className="projects-container">
-                <header className="mb-24 mt-20 text-center md:text-left">
+        <div className="page-wrapper bg-[#fcfaf7]">
+            {/* ABSTRACT HERO SECTION */}
+            <section className="hero-abstract">
+                <div className="hero-container">
                     <motion.div 
-                        initial={{ opacity: 0, y: 20 }} 
-                        animate={{ opacity: 1, y: 0 }} 
-                        transition={{ duration: 0.8 }}
-                        className="max-w-4xl"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 1 }}
+                        className="hero-text-side"
                     >
-                        <h1 className="text-5xl md:text-7xl font-light tracking-tighter text-[#2d2a26] leading-[1.1] mb-6">
-                            Redefining Workspace <br />
-                            <span className="font-serif italic text-[#c5a37d]">through excellence.</span>
+                        <span className="hero-tag">Workspace Studio</span>
+                        <h1 className="hero-title-main">
+                            Architectural <br />
+                            <span className="font-serif italic text-[#c5a37d]">Perspectives.</span>
                         </h1>
-                        <div className="h-[1.5px] w-20 bg-[#c5a37d] mb-16 mx-auto md:mx-0"></div>
+                        <p className="hero-desc">Crafting environments where innovation meets aesthetic precision.</p>
+                        
+                        {/* DISCOVER BUTTON */}
+                        <motion.button 
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={scrollToProjects}
+                            className="hero-discover-btn"
+                        >
+                            Discover Projects
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+                        </motion.button>
                     </motion.div>
 
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 border-b border-[#2d2a26]/10 pb-8">
-                        <div className="filter-bar-editorial">
-                            {categories.map(cat => (
-                                <button 
-                                    key={cat} 
-                                    onClick={() => setFilter(cat)} 
-                                    className={`filter-link ${filter === cat ? 'active' : ''}`}
-                                >
-                                    {cat} <span className="count-sup">{getCount(cat)}</span>
-                                </button>
-                            ))}
-                        </div>
+                    <div className="hero-gallery-abstract">
+                        <motion.div animate={{ y: [0, -20, 0] }} transition={{ duration: 6, repeat: Infinity }} className="abs-img-1">
+                            <img src="projects-pictures/uipath.jpg" alt="Abstract 1" />
+                        </motion.div>
+                        <motion.div animate={{ y: [0, 20, 0] }} transition={{ duration: 8, repeat: Infinity }} className="abs-img-2">
+                            <img src="projects-pictures/adobe.jpg" alt="Abstract 2" />
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }} className="abs-img-main">
+                            <img src="projects-pictures/omvpetrom.jpg" alt="Hero Main" />
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
 
-                        <div className="search-wrapper-minimal">
+            {/* TARGET FOR SCROLL */}
+            <main ref={projectsRef} className="projects-container">
+                {/* VISUAL SEARCH & FILTER BAR */}
+                <div className="toolbar-visual">
+                    <div className="filter-bar-editorial">
+                        {categories.map(cat => (
+                            <button 
+                                key={cat} 
+                                onClick={() => setFilter(cat)} 
+                                className={`filter-link ${filter === cat ? 'active' : ''}`}
+                            >
+                                {cat} <span className="count-sup">{getCount(cat)}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="search-container-visual">
+                        <div className="search-glass">
+                            <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                             <input 
                                 type="text" 
-                                placeholder="Search project..." 
-                                className="search-input-editorial"
+                                placeholder="Find a project..." 
+                                className="search-input-visual"
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                onFocus={(e) => e.target.placeholder = ""} 
-                                onBlur={(e) => e.target.placeholder = "Search project"}
                             />
                         </div>
                     </div>
-                </header>
+                </div>
 
+                {/* GRID 3 COLUMNS - ZEN LOOK */}
                 <motion.div layout={!isMobile} className="dynamic-grid-editorial">
                     <AnimatePresence mode='popLayout'>
                         {filteredProjects.map((p, index) => (
                             <motion.div
                                 key={p.id}
-                                layout={!isMobile}
+                                layout
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-50px" }}
@@ -173,28 +209,20 @@ function ProjectsScene() {
                                         <div className="discover-badge-editorial">
                                             <span>View Project</span>
                                         </div>
-                                        <img 
-                                            src={p.img} 
-                                            alt={p.title} 
-                                            className="img-editorial"
-                                            loading="lazy"
-                                        />
+                                        <img src={p.img} alt={p.title} className="img-editorial" loading="lazy" />
                                     </div>
                                     <div className="content-editorial">
-                                        <div className="label-row">
-                                            <span className="cat-tag-editorial">{p.cat}</span>
-                                            <span className="separator">•</span>
-                                            <span className="type-tag-editorial">{p.type}</span>
-                                        </div>
+                                        <span className="cat-tag-editorial">{p.cat}</span>
                                         <h3 className="title-editorial">{p.title}</h3>
+                                        <div className="hover-line-zen"></div>
                                     </div>
                                 </a>
                             </motion.div>
                         ))}
                     </AnimatePresence>
                 </motion.div>
-            </div>
-        </main>
+            </main>
+        </div>
     );
 }
 
