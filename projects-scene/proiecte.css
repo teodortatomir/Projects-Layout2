@@ -424,7 +424,7 @@ main.projects-container {
 }
 .minimal-form input:focus { border-bottom-color: var(--primary); }
 .form-submit-btn { background: var(--text-dark); color: white; border: none; padding: 22px 50px; font-size: 12px; text-transform: uppercase; letter-spacing: 4px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 20px; transition: 0.4s; }
-.form-submit-btn:hover { background: var(--primary); transform: translateX(12px); }
+.form-submit-btn:hover { background: #bea791; transform: translateX(12px); }
 
 .minimal-form input::placeholder, .minimal-form textarea::placeholder {
     color: rgba(255, 255, 255, 0.5);
@@ -504,4 +504,82 @@ main.projects-container {
         width: 100%; /* Pe mobil lăsăm imaginile mai mari */
     }
 
+}
+
+/* --- TESTIMONIAL SLIDER SECTION --- */
+.testimonial-slider-section {
+    position: relative;
+    padding: 100px 0;
+    width: 100%;
+    background-color: #f7f7f7; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.testimonial-fixed-height-wrapper {
+    position: relative;
+    /* Calculăm o înălțime minimă suficientă pentru cel mai lung text */
+    min-height: 320px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.testimonial-content {
+    /* Poziționare absolută în interiorul wrapper-ului fix pentru a preveni jumping-ul layout-ului */
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.testimonial-slider-section .parallax-bg-wrapper,
+.testimonial-slider-section .overlay-dark {
+    display: none;
+}
+
+.overlay-dark {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(26, 28, 32, 0.85); /* Overlay închis pentru lizibilitate */
+    z-index: 2;
+}
+
+.testimonial-container {
+    position: relative;
+    z-index: 10;
+    max-width: 1000px; /* Puțin mai lat pentru citire ușoară */
+    width: 90%;
+    text-align: center;
+}
+
+.testimonial-brand {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--primary);
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.testimonial-quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(20px, 2.2vw, 26px); /* Micșorat puțin pentru a preveni jumping-ul */
+    line-height: 1.6;
+    color: var(--text-dark); 
+    margin: 0 auto 30px;
+    max-width: 850px;
+}
+
+@media (max-width: 768px) {
+    .testimonial-slider-section {
+        height: auto;
+        padding: 100px 0;
+    }
 }

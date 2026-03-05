@@ -101,6 +101,33 @@ function ProjectsScene() {
     const projectsRef = useRef(null);
     const caseStudyRef = useRef(null);
     const isMobile = window.innerWidth < 768;
+    const testimonials = [
+        {
+            brand: "Edenred",
+            text: "Besides the final result, their high level of professionalism, flexibility and friendly approach determined us to recommend them to other business with no hesitation, especially to those seeking products and solutions adjusted to their individual needs and requirements – performed at the higher standards."
+        },
+        {
+            brand: "Qualitest",
+            text: "Workspaces’ team showed a lot of flexibility and ingenuity in updating the design and implementation of the project in accordance with the Romanian laws and always keeping in check with the time table."
+        },
+        {
+            brand: "Coca Cola",
+            text: "They proved to be a hardworking partner that contributed significantly in achieving the excellent standards for the completed project."
+        },
+        {
+            brand: "Playtika",
+            text: "We were pleased with the ability of Workspace to provide a balanced solution of high quality products, keeping in line with the legislation, schedule and budget."
+        }
+    ];
+    const [activeTab, setActiveTab] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setActiveTab((prev) => (prev + 1) % testimonials.length);
+        }, 8000); 
+
+        return () => clearInterval(timer); // Curățăm timer-ul la demontarea componentei
+    }, []);
 
     // EFECT PARALAX FIXED WINDOW (RHINO STYLE)
     const { scrollYProgress } = useScroll({
@@ -237,21 +264,23 @@ function ProjectsScene() {
                 )}
             </main>
 
-            {/* TESTIMONIAL / CASE STUDY PARALLAX */}
-            <section ref={caseStudyRef} className="case-study-parallax">
-                <motion.div style={{ y: yBackground }} className="parallax-bg-wrapper">
-                    <img src="projects-pictures/mindspaces.jpg" alt="Background" className="parallax-img" />
-                </motion.div>
-                <div className="parallax-content">
-                    <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-                        <span className="parallax-tag">Testimonials</span>
-                        <h2 className="parallax-title">What our collaborators say about us.</h2>
-                        <p className="parallax-desc">"Workspace Studio transformed our vision into a high-performance environment that truly reflects our culture."</p>
-                        <a href="#" className="case-study-link">
-                            Read Full Story
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </motion.div>
+            <section className="testimonial-slider-section">
+                <div className="testimonial-container">
+                    <div className="testimonial-fixed-height-wrapper"> {/* Container nou pentru înălțime fixă */}
+                        <AnimatePresence mode="wait">
+                            <motion.div 
+                                key={activeTab}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.8, ease: "easeInOut" }}
+                                className="testimonial-content"
+                            >
+                                <span className="testimonial-brand">{testimonials[activeTab].brand}</span>
+                                <p className="testimonial-quote">"{testimonials[activeTab].text}"</p>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
                 </div>
             </section>
 
