@@ -191,8 +191,8 @@ function ProjectsScene() {
                         </button>
                     </motion.div>
                     <div className="hero-gallery-abstract">
-                        <motion.div animate={{ y: [0, -25, 0] }} transition={{ duration: 7, repeat: Infinity }} className="abs-img-1"><img src="projects-pictures/uipath.jpg" alt="" /></motion.div>
-                        <motion.div animate={{ y: [0, 25, 0] }} transition={{ duration: 9, repeat: Infinity }} className="abs-img-2"><img src="projects-pictures/adobe.jpg" alt="" /></motion.div>
+                        <motion.div animate={{ y: [0, -25, 0] }} transition={{ duration: 7, repeat: Infinity }} className="abs-img-1"><img src="projects-pictures/leading-it.jpg" alt="" /></motion.div>
+                        <motion.div animate={{ y: [0, 25, 0] }} transition={{ duration: 9, repeat: Infinity }} className="abs-img-2"><img src="projects-pictures/loreal-romania.jpg" alt="" /></motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 1 }} className="abs-img-main"><img src="projects-pictures/omvpetrom.jpg" alt="" /></motion.div>
                     </div>
                 </div>
