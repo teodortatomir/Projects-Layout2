@@ -1,4 +1,4 @@
-const { motion, AnimatePresence } = window.Motion;
+const { motion, AnimatePresence, useScroll, useTransform } = window.Motion;
 const { useState, useEffect, useMemo, useRef } = React;
 
 const projectsData = [
@@ -97,118 +97,118 @@ const projectsData = [
 function ProjectsScene() {
     const [filter, setFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
-    const projectsRef = useRef(null); // Ref for scrolling
+    const [visibleCount, setVisibleCount] = useState(9);
+    const projectsRef = useRef(null);
+    const caseStudyRef = useRef(null);
     const isMobile = window.innerWidth < 768;
 
-    // Scroll function
+    // EFECT PARALAX FIXED WINDOW (RHINO STYLE)
+    const { scrollYProgress } = useScroll({
+        target: caseStudyRef,
+        offset: ["start end", "end start"]
+    });
+    
+    const yBackground = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+
     const scrollToProjects = () => {
-        projectsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const offset = 0; // Match your navbar height
+        const element = projectsRef.current;
+        const headerOffset = offset;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+        });
+    };
+
+    const handleViewMore = () => {
+        setVisibleCount(prev => prev + 9);
     };
 
     const filteredProjects = useMemo(() => {
-        return projectsData.filter(p => {
+        const filtered = projectsData.filter(p => {
             const matchesFilter = filter === "All" || p.type === filter;
-            const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                 p.cat.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesFilter && matchesSearch;
         });
-    }, [filter, searchQuery]);
+        return filtered.slice(0, visibleCount);
+    }, [filter, searchQuery, visibleCount]);
 
     const getCount = (cat) => cat === "All" ? projectsData.length : projectsData.filter(p => p.type === cat).length;
     const categories = ["All", "Corporate", "Tech", "Exclusive", "Beauty"];
 
     return (
-        <div className="page-wrapper bg-[#fcfaf7]">
-            {/* ABSTRACT HERO SECTION */}
+        <div className="page-wrapper bg-white">
+            {/* HERO SECTION */}
             <section className="hero-abstract">
                 <div className="hero-container">
                     <motion.div 
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 1 }}
+                        initial={{ opacity: 0, y: 20 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        transition={{ duration: 0.8 }} 
                         className="hero-text-side"
                     >
                         <span className="hero-tag">Workspace Studio</span>
                         <h1 className="hero-title-main">
-                            Architectural <br />
-                            <span className="font-serif italic text-[#c5a37d]">Perspectives.</span>
+                            Modern 
+                            <span className="font-serif">Workspaces.</span>
                         </h1>
-                        <p className="hero-desc">Crafting environments where innovation meets aesthetic precision.</p>
-                        
-                        {/* DISCOVER BUTTON */}
-                        <motion.button 
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={scrollToProjects}
-                            className="hero-discover-btn"
-                        >
-                            Discover Projects
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
-                        </motion.button>
+                        <p className="hero-desc">
+                            Elevating commercial environments through high-performance design and architectural precision.
+                        </p>
+                        <button onClick={scrollToProjects} className="hero-discover-btn">
+                            Explore Projects 
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+                        </button>
                     </motion.div>
-
                     <div className="hero-gallery-abstract">
-                        <motion.div animate={{ y: [0, -20, 0] }} transition={{ duration: 6, repeat: Infinity }} className="abs-img-1">
-                            <img src="projects-pictures/uipath.jpg" alt="Abstract 1" />
-                        </motion.div>
-                        <motion.div animate={{ y: [0, 20, 0] }} transition={{ duration: 8, repeat: Infinity }} className="abs-img-2">
-                            <img src="projects-pictures/adobe.jpg" alt="Abstract 2" />
-                        </motion.div>
-                        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }} className="abs-img-main">
-                            <img src="projects-pictures/omvpetrom.jpg" alt="Hero Main" />
-                        </motion.div>
+                        <motion.div animate={{ y: [0, -25, 0] }} transition={{ duration: 7, repeat: Infinity }} className="abs-img-1"><img src="projects-pictures/uipath.jpg" alt="" /></motion.div>
+                        <motion.div animate={{ y: [0, 25, 0] }} transition={{ duration: 9, repeat: Infinity }} className="abs-img-2"><img src="projects-pictures/adobe.jpg" alt="" /></motion.div>
+                        <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 1 }} className="abs-img-main"><img src="projects-pictures/omvpetrom.jpg" alt="" /></motion.div>
                     </div>
                 </div>
             </section>
 
-            {/* TARGET FOR SCROLL */}
+            {/* PROJECTS SECTION */}
             <main ref={projectsRef} className="projects-container">
-                {/* VISUAL SEARCH & FILTER BAR */}
                 <div className="toolbar-visual">
                     <div className="filter-bar-editorial">
                         {categories.map(cat => (
-                            <button 
-                                key={cat} 
-                                onClick={() => setFilter(cat)} 
-                                className={`filter-link ${filter === cat ? 'active' : ''}`}
-                            >
+                            <button key={cat} onClick={() => { setFilter(cat); setVisibleCount(9); }} className={`filter-link ${filter === cat ? 'active' : ''}`}>
                                 {cat} <span className="count-sup">{getCount(cat)}</span>
                             </button>
                         ))}
                     </div>
-
                     <div className="search-container-visual">
                         <div className="search-glass">
-                            <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                            <input 
-                                type="text" 
-                                placeholder="Find a project..." 
-                                className="search-input-visual"
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                            <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" placeholder="Search by name..." className="search-input-visual" onChange={(e) => setSearchQuery(e.target.value)} />
                         </div>
                     </div>
                 </div>
 
-                {/* GRID 3 COLUMNS - ZEN LOOK */}
-                <motion.div layout={!isMobile} className="dynamic-grid-editorial">
+                <motion.div layout className="dynamic-grid-editorial">
                     <AnimatePresence mode='popLayout'>
-                        {filteredProjects.map((p, index) => (
-                            <motion.div
-                                key={p.id}
+                        {filteredProjects.map((p, i) => ( // Adăugăm 'i' pentru index
+                            <motion.div 
+                                key={p.id} 
                                 layout
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 40 }} // Pornim de puțin mai de jos pentru un "lift" mai lung
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-50px" }}
+                                viewport={{ once: true, margin: "-100px" }} // Apare când e 100px în interiorul ecranului
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.5, delay: isMobile ? 0 : (index % 3) * 0.05 }}
+                                transition={{ 
+                                    duration: 0.9,          // S-a mărit de la 0.6 la 0.9 secunde pentru o apariție mai lentă
+                                    ease: [0.16, 1, 0.3, 1], // Curbă "Cubic Bezier" pentru o mișcare mai fluidă, arhitecturală
+                                    delay: (i % 3) * 0.15    // Stagger: decalează cardurile din același rând cu 0.15s
+                                }}
                                 className="project-card-editorial group"
                             >
                                 <a href={p.link} className="block no-underline">
                                     <div className="img-container-editorial">
-                                        <div className="discover-badge-editorial">
-                                            <span>View Project</span>
-                                        </div>
+                                        <div className="discover-badge-editorial"><span>View Project</span></div>
                                         <img src={p.img} alt={p.title} className="img-editorial" loading="lazy" />
                                     </div>
                                     <div className="content-editorial">
@@ -221,7 +221,98 @@ function ProjectsScene() {
                         ))}
                     </AnimatePresence>
                 </motion.div>
+                
+                {/* BUTTON DISAPPEARS LOGIC */}
+                {visibleCount < projectsData.filter(p => {
+                    const matchesFilter = filter === "All" || p.type === filter;
+                    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesFilter && matchesSearch;
+                }).length && (
+                    <div className="view-more-container">
+                        <button onClick={handleViewMore} className="view-more-btn">
+                            Load More Projects
+                            <span className="btn-line"></span>
+                        </button>
+                    </div>
+                )}
             </main>
+
+            {/* TESTIMONIAL / CASE STUDY PARALLAX */}
+            <section ref={caseStudyRef} className="case-study-parallax">
+                <motion.div style={{ y: yBackground }} className="parallax-bg-wrapper">
+                    <img src="projects-pictures/mindspaces.jpg" alt="Background" className="parallax-img" />
+                </motion.div>
+                <div className="parallax-content">
+                    <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+                        <span className="parallax-tag">Testimonials</span>
+                        <h2 className="parallax-title">What our collaborators say about us.</h2>
+                        <p className="parallax-desc">"Workspace Studio transformed our vision into a high-performance environment that truly reflects our culture."</p>
+                        <a href="#" className="case-study-link">
+                            Read Full Story
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* ACUM ADAUGATA: CONTACT SECTION */}
+            <section className="contact-section-editorial">
+                <div className="contact-grid">
+                    <div className="contact-image-side">
+                        <div className="contact-image-wrapper">
+                            <img src="Horatiu-Didea.jpg" alt="Contact Us" className="contact-img" />
+                        </div>
+                    </div>
+                    <div className="contact-form-side">
+                        <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+                            <span className="contact-label">Get in touch</span>
+                            <h2 className="contact-title">It all starts with <br /><span className="font-serif italic text-[#3c4a57]">"hello".</span></h2>
+                            <p className="contact-desc">Fill out the form below and one of our specialists will be in touch shortly to discuss your workspace needs.</p>
+                            
+                            <form className="minimal-form">
+                                <div className="form-group">
+                                    <input type="text" placeholder="Full Name" required />
+                                </div>
+                                <div className="form-group">
+                                    <input type="email" placeholder="Business Email" required />
+                                </div>
+                                <div className="form-group">
+                                    <textarea placeholder="Tell us about your project" rows="4"></textarea>
+                                </div>
+                                <button type="submit" className="form-submit-btn">
+                                    Send Message
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </button>
+                            </form>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* PARTNERS SECTION */}
+            <section className="partners-section" id="partners">
+                <div className="container">
+                    <h2 className="section-label">Established Partners & Brands</h2>
+                    <div className="partners-wrapper">
+                        <a href="https://www.hermanmiller.com/" target="_blank" className="logo-card hm-logo"><img src="logos/hermanmiller-white-logo.png" alt="Herman Miller" /></a>
+                        <a href="https://www.knoll.com/" target="_blank" className="logo-card knoll-logo"><img src="logos/knoll-white-logo.png" alt="Knoll" /></a>
+                        <a href="https://www.hay.dk/" target="_blank" className="logo-card"><img src="logos/hay-logo.png" alt="Hay" /></a>
+                        <a href="https://www.naughtone.com/" target="_blank" className="logo-card"><img src="logos/naughtonewhite-logo.png" alt="NaughtOne" /></a>
+                        <a href="https://www.frameryacoustics.com/" target="_blank" className="logo-card"><img src="logos/framery-logo.png" alt="Framery" /></a>
+                        <a href="https://buzzi.space/" target="_blank" className="logo-card"><img src="logos/buzzispace-logo.png" alt="buzzispace" /></a>
+                        <a href="https://www.impactacoustic.com/" target="_blank" className="logo-card"><img src="logos/impactacousticlogo-logo.png" alt="Impactacoustic" /></a>
+                        <a href="https://www.kartell.com/" target="_blank" className="logo-card"><img src="logos/kartell-logo.png" alt="Kartell" /></a>
+                        <a href="https://www.maarslivingwalls.com/" target="_blank" className="logo-card"><img src="logos/maarslivingwalls-logo.png" alt="Maarslivingwalls" /></a>
+                        <a href="https://www.mohawkgroup.eu/en" target="_blank" className="logo-card"><img src="logos/mohawk-logo.png" alt="Mohawk" /></a>
+                        <a href="https://www.muuto.com/" target="_blank" className="logo-card"><img src="logos/muuto-logo.png" alt="Muuto" /></a>
+                    </div>
+                </div>
+            </section>
+
+            {/* FOOTER */}
+            <footer className="main-footer">
+                <p>&copy; 2026 WORKSPACE STUDIO. ALL RIGHTS RESERVED.</p>
+            </footer>
         </div>
     );
 }
