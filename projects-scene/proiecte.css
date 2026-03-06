@@ -12,7 +12,7 @@
     --color-ergonomics: #e30613;
     --color-sustainability: #009640;
     --color-turnkey: #004d43;
-    --color-design: #0072bc;
+    --color-design: #66007a;
 }
 
 body::-webkit-scrollbar { display: none; }
@@ -38,8 +38,6 @@ body { -ms-overflow-style: none; scrollbar-width: none; background-color: var(--
     z-index: 9999;
     display: flex;
     align-items: center;
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    border-bottom: 1px solid rgba(0,0,0,0.03);
 }
 
 /* Starea la Scroll: Mai mic, transparent și blurat */
